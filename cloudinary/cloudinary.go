@@ -195,3 +195,23 @@ func sanitizeURL(uri *url.URL) *url.URL {
 	}
 	return uri
 }
+
+type ErrorResponse struct {
+	// HTTP response that caused this error
+	Response *http.Response
+
+	ErrorData struct {
+		Message string `json:"message"`
+	} `json:"error"`
+
+	// Errors can also include a documentation_url field
+	// pointing to some content that might help you resolve the error
+	DocumentationURL string `json:"documentation_url,omitempty"`
+}
+
+func (r *ErrorResponse) Error() string {
+	return fmt.Sprintf("%v %v: %d %v",
+		r.Response.Request.Method, sanitizeURL(r.Response.Request.URL),
+		r.Response.StatusCode, r.ErrorData.Message)
+}
+
