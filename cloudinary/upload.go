@@ -31,13 +31,41 @@ type UploadRequest struct {
 	Overwrite               bool   `json:"overwrite,omitempty"`
 
 	// Resource data fields
-	Tags            string `json:"tags,omitempty"`
-	Context         string `json:"context,omitempty"`
-	Colors          bool   `json:"colors,omitempty"`
-	Faces           bool   `json:"faces,omitempty"`
-	QualityAnalysis bool   `json:"quality_analysis,omitempty"`
-	ImageMetadata   bool   `json:"image_metadata,omitempty"`
-	Phash           bool   `json:"phash,omitempty"`
+	Tags                  string      `json:"tags,omitempty"`
+	Context               string      `json:"context,omitempty"`
+	Colors                bool        `json:"colors,omitempty"`
+	Faces                 bool        `json:"faces,omitempty"`
+	QualityAnalysis       bool        `json:"quality_analysis,omitempty"`
+	ImageMetadata         bool        `json:"image_metadata,omitempty"`
+	Phash                 bool        `json:"phash,omitempty"`
+	ResponsiveBreakpoints interface{} `json:"responsive_breakpoints,omitempty"`
+	AutoTagging           float64     `json:"auto_tagging,omitempty"`
+	Categorization        string      `json:"categorization,omitempty"`
+	Detection             string      `json:"detection,omitempty"`
+	ORC                   string      `json:"ocr,omitempty"`
+	Exif                  bool        `json:"exif,omitempty"`
+
+	// Manipulations fields
+	Eager                string `json:"eager,omitempty"`
+	EagerAsync           bool   `json:"eager_async,omitempty"`
+	EagerNotificationURL string `json:"eager_notification_url,omitempty"`
+	Transformation       string `json:"transformation,omitempty"`
+	Format               string `json:"format,omitempty"`
+	CustomCoordinates    string `json:"custom_coordinates,omitempty"`
+	FaceCoordinates      string `json:"face_coordinates,omitempty"`
+	BackgroundRemoval    string `json:"background_removal,omitempty"`
+	RawConvert           string `json:"raw_convert,omitempty"`
+
+	// Additional options fields
+	AllowedFormats    string `json:"allowed_formats,omitempty"`
+	Async             bool   `json:"async,omitempty"`
+	Backup            bool   `json:"backup,omitempty"`
+	Callback          string `json:"callback,omitempty"`
+	Headers           string `json:"headers,omitempty"`
+	Invalidate        bool   `json:"invalidate,omitempty"`
+	Moderation        string `json:"moderation,omitempty"`
+	Proxy             string `json:"proxy,omitempty"`
+	ReturnDeleteToken bool   `json:"return_delete_token,omitempty"`
 }
 
 type UploadResponse struct {
