@@ -19,33 +19,33 @@ type UploadRequest struct {
 
 	// Optional fields to call upload request
 	// Naming and storage fields
-	PublicId       string `json:"public_id"`
-	Folder         string `json:"folder"`
-	UseFilename    bool   `json:"use_filename"`
-	UniqueFilename bool   `json:"unique_filename"`
-	ResourceType   string `json:"resource_type"`
-	Type           string `json:"type"`
+	PublicId       string `json:"public_id,omitempty"`
+	Folder         string `json:"folder,omitempty"`
+	UseFilename    bool   `json:"use_filename,omitempty"`
+	UniqueFilename bool   `json:"unique_filename,omitempty"`
+	ResourceType   string `json:"resource_type,omitempty"`
+	Type           string `json:"type,omitempty"`
 	//AccessControl *AccessControl `json:"access_control"
-	AccessMode              string `json:"access_mode"`
-	DiscardOriginalFilename bool   `json:"discard_original_filename"`
-	Overwrite               bool   `json:"overwrite"`
+	AccessMode              string `json:"access_mode,omitempty"`
+	DiscardOriginalFilename bool   `json:"discard_original_filename,omitempty"`
+	Overwrite               bool   `json:"overwrite,omitempty"`
 
 	// Resource data fields
-	Tags            string `json:"tags"`
-	Context         string `json:"context"`
-	Colors          bool   `json:"colors"`
-	Faces           bool   `json:"faces"`
-	QualityAnalysis bool   `json:"quality_analysis"`
-	ImageMetadata   bool   `json:"image_metadata"`
-	Phash           bool   `json:"phash"`
+	Tags            string `json:"tags,omitempty"`
+	Context         string `json:"context,omitempty"`
+	Colors          bool   `json:"colors,omitempty"`
+	Faces           bool   `json:"faces,omitempty"`
+	QualityAnalysis bool   `json:"quality_analysis,omitempty"`
+	ImageMetadata   bool   `json:"image_metadata,omitempty"`
+	Phash           bool   `json:"phash,omitempty"`
 }
 
 type UploadResponse struct {
 	PublicId         string   `json:"public_id"`
 	Version          int64    `json:"version"`
 	Signature        string   `json:"signature"`
-	Width            int8     `json:"width"`
-	Height           int8     `json:"height"`
+	Width            int64    `json:"width"`
+	Height           int64    `json:"height"`
 	Format           string   `json:"format"`
 	ResourceType     string   `json:"resource_type"`
 	CreatedAt        string   `json:"created_at"`
