@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -160,6 +161,10 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	defer resp.Body.Close()
 
 	response := newResponse(resp)
+	err = CheckResponse(resp)
+	if err != nil {
+		return response, err
+	}
 
 	if v != nil {
 		if w, ok := v.(io.Writer); ok {
@@ -215,3 +220,23 @@ func (r *ErrorResponse) Error() string {
 		r.Response.StatusCode, r.ErrorData.Message)
 }
 
+// CheckResponse checks the API response for errors, and returns them if
+// present. A response is considered an error if it has a status code outside
+// the 200 range or equal to 202 Accepted.
+// API error responses are expected to have either no response
+// body, or a JSON response body that maps to ErrorResponse. Any other
+// response body will be silently ignored.
+func CheckResponse(r *http.Response) error {
+	if c := r.StatusCode; 200 <= c && c <= 299 {
+		return nil
+	}
+	errorResponse := &ErrorResponse{Response: r}
+	data, err := ioutil.ReadAll(r.Body)
+	if err == nil && data != nil {
+		json.Unmarshal(data, errorResponse)
+	}
+	switch {
+	default:
+		return errorResponse
+	}
+}
