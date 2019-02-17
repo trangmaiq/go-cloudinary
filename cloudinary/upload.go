@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -89,6 +90,7 @@ type UploadResponse struct {
 }
 
 func (us *UploadService) UploadImage(ctx context.Context, request *UploadRequest) (*UploadResponse, *Response, error) {
+	us.prepareUploadImage(request)
 	u := fmt.Sprintf("image/upload")
 
 	timeStamp := strconv.Itoa(int(time.Now().UTC().Unix())) + us.client.apiSecret
@@ -106,4 +108,17 @@ func (us *UploadService) UploadImage(ctx context.Context, request *UploadRequest
 	}
 
 	return ur, resp, nil
+}
+
+func (us *UploadService) prepareUploadImage(request *UploadRequest) {
+	switch {
+	case strings.HasPrefix(request.File, "/"):
+	// Upload image using local path
+	case strings.HasPrefix(request.File, "s3"):
+	// Upload image using Amazon S3
+	case strings.HasPrefix(request.File, "gs"):
+		// Upload image using Google Storage
+	default:
+		// Upload image using HTTPS URL or HTTP
+	}
 }
