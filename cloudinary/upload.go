@@ -90,13 +90,29 @@ type UploadResponse struct {
 }
 
 func (us *UploadService) UploadImage(ctx context.Context, request *UploadRequest) (*UploadResponse, *Response, error) {
-	us.prepareUploadImage(request)
 	u := fmt.Sprintf("image/upload")
-
 	timeStamp := strconv.Itoa(int(time.Now().UTC().Unix())) + us.client.apiSecret
 	request.Timestamp = timeStamp
 
-	req, err := us.client.NewRequest("POST", u, request)
+	switch {
+	case strings.HasPrefix(request.File, "/"):
+		// Upload image using local path
+		return us.uploadFromLocalPath(ctx, u, request)
+	case strings.HasPrefix(request.File, "s3"):
+		// Upload image using Amazon S3return
+		return us.uploadFromS3(ctx, u, request)
+	case strings.HasPrefix(request.File, "gs"):
+		// Upload image using Google Storage
+		return us.uploadFromGoogleStorage(ctx, u, request)
+
+	default:
+		// Upload image using HTTPS URL or HTTP
+		return us.uploadFromURL(ctx, u, request)
+	}
+}
+
+func (us *UploadService) uploadFromURL(ctx context.Context, url string, request *UploadRequest) (*UploadResponse, *Response, error) {
+	req, err := us.client.NewRequest("POST", url, request)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -110,19 +126,14 @@ func (us *UploadService) UploadImage(ctx context.Context, request *UploadRequest
 	return ur, resp, nil
 }
 
-func (us *UploadService) prepareUploadImage(request *UploadRequest) {
-	switch {
-	case strings.HasPrefix(request.File, "/"):
-		// Upload image using local path
-		return
-	case strings.HasPrefix(request.File, "s3"):
-		// Upload image using Amazon S3return
-		return
-	case strings.HasPrefix(request.File, "gs"):
-		// Upload image using Google Storage
-		return
-	default:
-		// Upload image using HTTPS URL or HTTP
-		return
-	}
+func (us *UploadService) uploadFromLocalPath(ctx context.Context, url string, request *UploadRequest) (*UploadResponse, *Response, error) {
+	return &UploadResponse{}, &Response{}, nil
+}
+
+func (us *UploadService) uploadFromS3(ctx context.Context, url string, request *UploadRequest) (*UploadResponse, *Response, error) {
+	return &UploadResponse{}, &Response{}, nil
+}
+
+func (us *UploadService) uploadFromGoogleStorage(ctx context.Context, url string, request *UploadRequest) (*UploadResponse, *Response, error) {
+	return &UploadResponse{}, &Response{}, nil
 }
