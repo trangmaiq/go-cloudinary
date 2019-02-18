@@ -99,7 +99,7 @@ func (us *UploadService) UploadImage(ctx context.Context, request *UploadRequest
 		// Upload image using local path
 		return us.uploadFromLocalPath(ctx, u, request)
 	case strings.HasPrefix(request.File, "s3"):
-		// Upload image using Amazon S3return
+		// Upload image using Amazon S3
 		return us.uploadFromS3(ctx, u, request)
 	case strings.HasPrefix(request.File, "gs"):
 		// Upload image using Google Storage
