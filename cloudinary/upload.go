@@ -113,12 +113,16 @@ func (us *UploadService) UploadImage(ctx context.Context, request *UploadRequest
 func (us *UploadService) prepareUploadImage(request *UploadRequest) {
 	switch {
 	case strings.HasPrefix(request.File, "/"):
-	// Upload image using local path
+		// Upload image using local path
+		return
 	case strings.HasPrefix(request.File, "s3"):
-	// Upload image using Amazon S3
+		// Upload image using Amazon S3return
+		return
 	case strings.HasPrefix(request.File, "gs"):
 		// Upload image using Google Storage
+		return
 	default:
 		// Upload image using HTTPS URL or HTTP
+		return
 	}
 }
