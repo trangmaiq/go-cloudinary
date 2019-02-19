@@ -210,7 +210,6 @@ func (us *UploadService) buildParamsFromOption(opt *UploadOptions, writer *multi
 		return err
 	}
 
-	// iterate through inrecs
 	for field, val := range optMap {
 		valStr := fmt.Sprintf("%v", val)
 		err := writer.WriteField(field, valStr)
