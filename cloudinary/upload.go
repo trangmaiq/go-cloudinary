@@ -98,8 +98,21 @@ type UploadResponse struct {
 	OriginalFilename string   `json:"original_filename"`
 }
 
-func (us *UploadService) UploadImage(ctx context.Context, request *UploadRequest, opt *UploadOptions) (*UploadResponse, *Response, error) {
+type Opt func(uo *UploadOptions)
+
+func WithPublicId(id string) Opt {
+	return func(uo *UploadOptions) {
+		uo.PublicId = &id
+	}
+}
+
+func (us *UploadService) UploadImage(ctx context.Context, request *UploadRequest, opts ...Opt) (*UploadResponse, *Response, error) {
 	u := fmt.Sprintf("image/upload")
+
+	opt := new(UploadOptions)
+	for _, o := range opts {
+		o(opt)
+	}
 
 	switch {
 	case strings.HasPrefix(request.File, "/"):
