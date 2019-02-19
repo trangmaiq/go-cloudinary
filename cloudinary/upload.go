@@ -139,7 +139,7 @@ func (us *UploadService) uploadFromLocalPath(ctx context.Context, url string, re
 		return nil, nil, err
 	}
 
-	req, err := us.buildRequest(request, opt, u)
+	req, err := us.buildRequest(request, opt, u.String())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -156,7 +156,7 @@ func (us *UploadService) uploadFromLocalPath(ctx context.Context, url string, re
 func (us *UploadService) buildRequest(request *UploadRequest, opt *UploadOptions, u string) (req *http.Request, err error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	defer writer.Close()
+
 	if request != nil {
 		if err = us.buildParamsFromRequest(request, writer); err != nil {
 			return nil, err
@@ -169,8 +169,12 @@ func (us *UploadService) buildRequest(request *UploadRequest, opt *UploadOptions
 		}
 	}
 
+	writer.Close()
+
 	req, err = http.NewRequest("POST", u, body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
+	//req.Header.Set("Content-Length", strconv.Itoa(binary.Size(body)))
+
 	return req, err
 }
 
@@ -185,10 +189,16 @@ func (us *UploadService) buildParamsFromRequest(request *UploadRequest, writer *
 	}
 
 	file, _, err := us.openFile(request.File)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
 	stat, err := file.Stat()
 	if err != nil {
 		return err
 	}
+
 	if stat.IsDir() {
 		return errors.New("the asset to upload can't be a directory")
 	}
