@@ -106,6 +106,54 @@ func WithPublicId(id string) Opt {
 	}
 }
 
+func WithFolder(folder string) Opt {
+	return func(uo *UploadOptions) {
+		uo.Folder = &folder
+	}
+}
+
+func WithUseFilename(isUseFilename bool) Opt {
+	return func(uo *UploadOptions) {
+		uo.UseFilename = &isUseFilename
+	}
+}
+
+func WithUniqueFilename(isUniqueFilename bool) Opt {
+	return func(uo *UploadOptions) {
+		uo.UniqueFilename = &isUniqueFilename
+	}
+}
+
+func WithResourceType(resourceType string) Opt {
+	return func(uo *UploadOptions) {
+		uo.ResourceType = &resourceType
+	}
+}
+
+func WithType(typeStr string) Opt {
+	return func(uo *UploadOptions) {
+		uo.Type = &typeStr
+	}
+}
+
+func WithAccessMode(accessMode string) Opt {
+	return func(uo *UploadOptions) {
+		uo.AccessMode = &accessMode
+	}
+}
+
+func WithDiscardOriginalFilename(dof bool) Opt {
+	return func(uo *UploadOptions) {
+		uo.DiscardOriginalFilename = &dof
+	}
+}
+
+func WithOverwrite(isOverwrite bool) Opt {
+	return func(uo *UploadOptions) {
+		uo.Overwrite = &isOverwrite
+	}
+}
+
 func (us *UploadService) UploadImage(ctx context.Context, request *UploadRequest, opts ...Opt) (*UploadResponse, *Response, error) {
 	u := fmt.Sprintf("image/upload")
 
@@ -182,11 +230,13 @@ func (us *UploadService) buildRequest(request *UploadRequest, opt *UploadOptions
 		}
 	}
 
-	writer.Close()
+	err = writer.Close()
+	if err != nil {
+		return nil, err
+	}
 
 	req, err = http.NewRequest("POST", u, body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
-	//req.Header.Set("Content-Length", strconv.Itoa(binary.Size(body)))
 
 	return req, err
 }
