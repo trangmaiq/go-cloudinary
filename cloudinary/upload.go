@@ -51,7 +51,7 @@ type UploadOptions struct {
 	AutoTagging    *float64 `json:"auto_tagging,omitempty"`
 	Categorization *string  `json:"categorization,omitempty"`
 	Detection      *string  `json:"detection,omitempty"`
-	ORC            *string  `json:"ocr,omitempty"`
+	OCR            *string  `json:"ocr,omitempty"`
 	Exif           *bool    `json:"exif,omitempty"`
 
 	// Manipulations fields
