@@ -9,6 +9,7 @@ import (
 	"github.com/google/go-querystring/query"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -117,6 +118,21 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 	//	req.Header.Set("User-Agent", c.UserAgent)
 	//}
 	return req, nil
+}
+
+func (c *Client) NewUploadRequest(urlStr string, reader io.Reader, writer *multipart.Writer) (*http.Request, error) {
+	if !strings.HasSuffix(c.BaseURL.Path, "/") {
+		return nil, fmt.Errorf("BaseURL must have a trailing slash, but %q does not", c.BaseURL)
+	}
+	u, err := c.BaseURL.Parse(urlStr)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", u.String(), reader)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	return req, err
 }
 
 // Response is a Cloudinary API response.

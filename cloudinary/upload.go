@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -195,12 +194,27 @@ func (us *UploadService) uploadFromURL(ctx context.Context, url string, request 
 }
 
 func (us *UploadService) uploadFromLocalPath(ctx context.Context, url string, request *UploadRequest, opt *UploadOptions) (*UploadResponse, *Response, error) {
-	u, err := us.client.BaseURL.Parse(url)
-	if err != nil {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	if request != nil {
+		if err := us.buildParamsFromRequest(request, writer); err != nil {
+			return nil, nil, err
+		}
+	}
+
+	if opt != nil {
+		if err := us.buildParamsFromOption(opt, writer); err != nil {
+			return nil, nil, err
+		}
+	}
+
+	if err := writer.Close(); err != nil {
 		return nil, nil, err
 	}
 
-	req, err := us.buildRequest(request, opt, u.String())
+	req, err := us.client.NewUploadRequest(url, body, writer)
+
 	if err != nil {
 		return nil, nil, err
 	}
@@ -212,33 +226,6 @@ func (us *UploadService) uploadFromLocalPath(ctx context.Context, url string, re
 	}
 
 	return ur, resp, nil
-}
-
-func (us *UploadService) buildRequest(request *UploadRequest, opt *UploadOptions, u string) (req *http.Request, err error) {
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	if request != nil {
-		if err = us.buildParamsFromRequest(request, writer); err != nil {
-			return nil, err
-		}
-	}
-
-	if opt != nil {
-		if err = us.buildParamsFromOption(opt, writer); err != nil {
-			return nil, err
-		}
-	}
-
-	err = writer.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	req, err = http.NewRequest("POST", u, body)
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	return req, err
 }
 
 func (us *UploadService) buildParamsFromRequest(request *UploadRequest, writer *multipart.Writer) error {
