@@ -153,6 +153,78 @@ func WithOverwrite(isOverwrite bool) Opt {
 	}
 }
 
+func WithTags(tags string) Opt {
+	return func(uo *UploadOptions) {
+		uo.Tags = &tags
+	}
+}
+
+func WithContext(ctx string) Opt {
+	return func(uo *UploadOptions) {
+		uo.Context = &ctx
+	}
+}
+
+func WithColors(hasColor bool) Opt {
+	return func(uo *UploadOptions) {
+		uo.Colors = &hasColor
+	}
+}
+
+func WithFaces(returnFaces bool) Opt {
+	return func(uo *UploadOptions) {
+		uo.Faces = &returnFaces
+	}
+}
+
+func WithQualityAnalysis(returnQualityAnalysis bool) Opt {
+	return func(uo *UploadOptions) {
+		uo.QualityAnalysis = &returnQualityAnalysis
+	}
+}
+
+func WithImageMetadata(returnImageMetadata bool) Opt {
+	return func(uo *UploadOptions) {
+		uo.ImageMetadata = &returnImageMetadata
+	}
+}
+
+func WithPhash(returnPhash bool) Opt {
+	return func(uo *UploadOptions) {
+		uo.Phash = &returnPhash
+	}
+}
+
+func WithAutoTagging(autoTagging float64) Opt {
+	return func(uo *UploadOptions) {
+		uo.AutoTagging = &autoTagging
+	}
+}
+
+func WithCategorization(c string) Opt {
+	return func(uo *UploadOptions) {
+		uo.Categorization = &c
+	}
+}
+
+func WithDetection(d string) Opt {
+	return func(uo *UploadOptions) {
+		uo.Detection = &d
+	}
+}
+
+func WithOCR(ocr string) Opt {
+	return func(uo *UploadOptions) {
+		uo.OCR = &ocr
+	}
+}
+
+func WithExif(e bool) Opt {
+	return func(uo *UploadOptions) {
+		uo.Exif = &e
+	}
+}
+
 func (us *UploadService) UploadImage(ctx context.Context, request *UploadRequest, opts ...Opt) (*UploadResponse, *Response, error) {
 	u := fmt.Sprintf("image/upload")
 
@@ -228,6 +300,14 @@ func (us *UploadService) uploadFromLocalPath(ctx context.Context, url string, re
 	return ur, resp, nil
 }
 
+func (us *UploadService) uploadFromS3(ctx context.Context, url string, request *UploadRequest, opt *UploadOptions) (*UploadResponse, *Response, error) {
+	return &UploadResponse{}, &Response{}, nil
+}
+
+func (us *UploadService) uploadFromGoogleStorage(ctx context.Context, url string, request *UploadRequest, opt *UploadOptions) (*UploadResponse, *Response, error) {
+	return &UploadResponse{}, &Response{}, nil
+}
+
 func (us *UploadService) buildParamsFromRequest(request *UploadRequest, writer *multipart.Writer) error {
 	timeStamp := strconv.Itoa(int(time.Now().UTC().Unix())) + us.client.apiSecret
 	if err := writer.WriteField("timestamp", timeStamp); err != nil {
@@ -288,12 +368,4 @@ func (us *UploadService) openFile(filePath string) (file *os.File, dir string, e
 	file, err = os.Open(dir + filePath)
 	return file, dir, err
 
-}
-
-func (us *UploadService) uploadFromS3(ctx context.Context, url string, request *UploadRequest, opt *UploadOptions) (*UploadResponse, *Response, error) {
-	return &UploadResponse{}, &Response{}, nil
-}
-
-func (us *UploadService) uploadFromGoogleStorage(ctx context.Context, url string, request *UploadRequest, opt *UploadOptions) (*UploadResponse, *Response, error) {
-	return &UploadResponse{}, &Response{}, nil
 }
